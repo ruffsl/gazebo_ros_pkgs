@@ -99,6 +99,7 @@
 #include "gazebo_msgs/GetPhysicsProperties.h"
 
 #include <boost/algorithm/string.hpp>
+#include <boost/range/combine.hpp>
 
 namespace gazebo
 {
@@ -197,6 +198,9 @@ public:
 
   /// \brief
   void updateModelState(const gazebo_msgs::ModelState::ConstPtr& model_state);
+
+  /// \brief
+  void updateModelStates(const gazebo_msgs::ModelStates::ConstPtr& model_states);
 
   /// \brief
   bool applyJointEffort(gazebo_msgs::ApplyJointEffort::Request &req,gazebo_msgs::ApplyJointEffort::Response &res);
@@ -364,6 +368,7 @@ private:
   ros::ServiceServer clear_body_wrenches_service_;
   ros::Subscriber    set_link_state_topic_;
   ros::Subscriber    set_model_state_topic_;
+  ros::Subscriber    set_model_states_topic_;
   ros::Publisher     pub_link_states_;
   ros::Publisher     pub_model_states_;
   int                pub_link_states_connection_count_;

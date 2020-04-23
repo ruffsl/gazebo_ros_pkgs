@@ -458,6 +458,14 @@ void GazeboRosApiPlugin::advertiseServices()
                                                            ros::VoidPtr(), &gazebo_queue_);
   set_model_state_topic_ = nh_->subscribe(model_state_so);
 
+  // topic callback version for set_model_states
+  ros::SubscribeOptions model_states_so =
+    ros::SubscribeOptions::create<gazebo_msgs::ModelStates>(
+                                                           "set_model_states",10,
+                                                           boost::bind( &GazeboRosApiPlugin::updateModelStates,this,_1),
+                                                           ros::VoidPtr(), &gazebo_queue_);
+  set_model_states_topic_ = nh_->subscribe(model_states_so);
+
   // Advertise more services on the custom queue
   std::string pause_physics_service_name("pause_physics");
   ros::AdvertiseServiceOptions pause_physics_aso =
@@ -1603,6 +1611,21 @@ void GazeboRosApiPlugin::updateModelState(const gazebo_msgs::ModelState::ConstPt
   gazebo_msgs::SetModelState::Request req;
   req.model_state = *model_state;
   /*bool success =*/ setModelState(req,res);
+}
+
+void GazeboRosApiPlugin::updateModelStates(const gazebo_msgs::ModelStates::ConstPtr& model_states)
+{
+  bool is_paused = world_->IsPaused();
+  world_->SetPaused(true);
+  for (auto tup : boost::combine(model_states->name, model_states->pose, model_states->twist)) {
+    gazebo_msgs::ModelState model_state;
+    boost::tie(model_state.model_name, model_state.pose, model_state.twist) = tup;
+    gazebo_msgs::SetModelState::Response res;
+    gazebo_msgs::SetModelState::Request req;
+    req.model_state = model_state;
+    /*bool success =*/ setModelState(req,res);
+  }
+  world_->SetPaused(is_paused);
 }
 
 bool GazeboRosApiPlugin::applyJointEffort(gazebo_msgs::ApplyJointEffort::Request &req,
