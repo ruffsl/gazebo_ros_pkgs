@@ -1586,7 +1586,7 @@ bool GazeboRosApiPlugin::setModelState(gazebo_msgs::SetModelState::Request &req,
     //ROS_ERROR_NAMED("api_plugin", "target state: %f %f %f",target_pose.Pos().X(),target_pose.Pos().Y(),target_pose.Pos().Z());
     bool is_paused = world_->IsPaused();
     world_->SetPaused(true);
-    model->SetWorldPose(target_pose);
+    // model->SetWorldPose(target_pose);
     world_->SetPaused(is_paused);
 #if GAZEBO_MAJOR_VERSION >= 8
     //ignition::math::Pose3d p3d = model->WorldPose();
