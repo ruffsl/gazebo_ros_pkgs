@@ -1615,8 +1615,6 @@ void GazeboRosApiPlugin::updateModelState(const gazebo_msgs::ModelState::ConstPt
 
 void GazeboRosApiPlugin::updateModelStates(const gazebo_msgs::ModelStates::ConstPtr& model_states)
 {
-  bool is_paused = world_->IsPaused();
-  world_->SetPaused(true);
   for (auto tup : boost::combine(model_states->name, model_states->pose, model_states->twist)) {
     gazebo_msgs::ModelState model_state;
     boost::tie(model_state.model_name, model_state.pose, model_state.twist) = tup;
@@ -1625,7 +1623,6 @@ void GazeboRosApiPlugin::updateModelStates(const gazebo_msgs::ModelStates::Const
     req.model_state = model_state;
     /*bool success =*/ setModelState(req,res);
   }
-  world_->SetPaused(is_paused);
 }
 
 bool GazeboRosApiPlugin::applyJointEffort(gazebo_msgs::ApplyJointEffort::Request &req,
